@@ -23,7 +23,8 @@ class Encoder(nn.Module):
             p.requires_grad = False
 
     def forward(self, images):
-        """Forward propagation"""
+        """Forward propagation
+           :param images: torch images to encode"""
         out = self.resnet(images)  # dim = (batch_size, 2048, image_size/32, image_size/32)
         out = self.adaptive_pool(out)  # dim = (batch_size, 2048, encoded_image_size, encoded_image_size)
         out = out.permute(0, 2, 3, 1)  # dim = (batch_size, encoded_image_size, encoded_image_size, 2048)
@@ -32,12 +33,10 @@ class Encoder(nn.Module):
 
 class Attention(nn.Module):
     """Attention Block"""
-
     def __init__(self, encoder_dim, decoder_dim, attention_dim):
-        """Params:
-            encoder_dim: feature size of encoded images
-            decoder_dim: size of decoder's RNN
-            attention_dim: size of the attention network
+        """:param encoder_dim: feature size of encoded images
+           :param decoder_dim: size of decoder's RNN
+           :param attention_dim: size of the attention network
         """
         super(Attention, self).__init__()
         self.encoder_att = nn.Linear(encoder_dim, attention_dim)  # linear layer to transform encoded image
@@ -61,13 +60,12 @@ class DecoderWithAttention(nn.Module):
     """Decoder"""
 
     def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, device, encoder_dim=2048, dropout=0.5):
-        """Params:
-               attention_dim: size of attention network
-               embed_dim: embedding size
-               decoder_dim: size of decoder's RNN
-               vocab_size: size of vocabulary
-               encoder_dim: feature size of encoded images
-               dropout: dropout
+        """:param attention_dim: size of attention network
+           :param embed_dim: embedding size
+           :param decoder_dim: size of decoder's RNN
+           :param vocab_size: size of vocabulary
+           :param encoder_dim: feature size of encoded images
+           :param dropout: dropout
         """
         super(DecoderWithAttention, self).__init__()
 
@@ -100,24 +98,21 @@ class DecoderWithAttention(nn.Module):
 
     def load_pretrained_embeddings(self, embeddings):
         """ Loads embedding layer with pre-trained embeddings.
-            Params:
-                embeddings: pre-trained embeddings
+            :param embeddings: pre-trained embeddings
         """
         self.embedding.weight = nn.Parameter(embeddings)
 
     def fine_tune_embeddings(self, fine_tune=True):
         """ Allow fine-tuning of embedding layer? (Only makes sense to not-allow if using pre-trained embeddings).
-           Params:
-                fine_tune: Allow?
+            :param fine_tune: Allow?
         """
         for p in self.embedding.parameters():
             p.requires_grad = fine_tune
 
     def init_hidden_state(self, encoder_out):
         """ Creates the initial hidden and cell states for the decoder's LSTM based on the encoded images.
-            Params:
-                encoder_out: encoded images, a tensor of dimension (batch_size, num_pixels, encoder_dim)
-                hidden state, cell state
+            :param encoder_out: encoded images, a tensor of dimension (batch_size, num_pixels, encoder_dim)
+            :param hidden state, cell state
         """
         mean_encoder_out = encoder_out.mean(dim=1)
         h = self.init_h(mean_encoder_out)  # (batch_size, decoder_dim)
@@ -126,12 +121,10 @@ class DecoderWithAttention(nn.Module):
 
     def forward(self, encoder_out, encoded_captions, caption_lengths):
         """ Forward propagation.
-            Params:
-                encoder_out: encoded images, a tensor of dimension (batch_size, enc_image_size, enc_image_size, encoder_dim)
-                encoded_captions: encoded captions, a tensor of dimension (batch_size, max_caption_length)
-                caption_lengths: caption lengths, a tensor of dimension (batch_size, 1)
-            Returns:
-                scores for vocabulary, sorted encoded captions, decode lengths, weights, sort indices
+            :param encoder_out: encoded images, a tensor of dimension (batch_size, enc_image_size, enc_image_size, encoder_dim)
+            :param encoded_captions: encoded captions, a tensor of dimension (batch_size, max_caption_length)
+            :param caption_lengths: caption lengths, a tensor of dimension (batch_size, 1)
+            :return scores for vocabulary, sorted encoded captions, decode lengths, weights, sort indices
         """
 
         batch_size = encoder_out.size(0)

@@ -10,8 +10,8 @@ import torch
 class EncodeCaption:
     """ Encoder for the captions """
     def __init__(self, captions, max_len=None):
-        """ Args: - captions: dictionnary with a list of 5 captions for each key
-                  - max_len: length of the longest caption (computed if None)
+        """:param captions: dictionnary with a list of 5 captions for each key
+           :param max_len: length of the longest caption (computed if None)
         """
 
         self.captions = captions
@@ -52,7 +52,10 @@ class EncodeCaption:
         print("_ " * 50)
 
     def encode_word(self, cap):
-        """Encode the captions cap"""
+        """Encode the captions cap
+           :param cap: the caption pre-processed
+           :return the encoded corresponding caption"""
+
         encoded_cap = np.zeros(self.max_len)
         encoded_cap[0] = self.word_map['<start>']
 
@@ -66,9 +69,15 @@ class EncodeCaption:
 class CocoDataset(VisionDataset):
     """ Dataset class that handle COCO caption dataset """
     def __init__(self, img_dir, encoded_caption_dir, data_train=True, n_samples=10000,
-                 transform=None, target_transform=None, transforms=None):
-
-        super(CocoDataset, self).__init__(img_dir, transforms, transform, target_transform)
+                 transform=None, target_transform=None):
+        """ :param img_dir: str containing the path to the image folder
+            :param encoded_caption_dir: str containing the path to the caption json file
+            :param data_train: Boolean whether we want the training or validation data (2/3 1/3 split)
+            :param n_samples: int if the dataset is too big, you can limit the number of samples
+            :param transform: transformation to do on the images
+            :param target_transform: transformation to do on the encoded captions
+            """
+        super(CocoDataset, self).__init__(img_dir, transform, target_transform)
 
         self.encoded_caption_dir = encoded_caption_dir
         self.maximum_length = n_samples
@@ -102,12 +111,8 @@ class CocoDataset(VisionDataset):
         self.encoder = EncodeCaption(self.captions)
 
     def __getitem__(self, index):
-        """
-        Args:
-            index (int): Index
-
-        Returns:
-            tuple: Tuple (image, target). target is a list of captions for the image.
+        """:param index (int): Index
+           :return tuple: Tuple (image, target). target is a list of captions for the image.
         """
         path = self.img_dirs[index]
         # Caption opening

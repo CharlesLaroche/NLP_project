@@ -7,14 +7,12 @@ import torch.nn.functional as F
 
 def caption_image_beam_search(encoder, decoder, image_path, word_map, device, beam_size=3):
     """ Reads an image and captions it with beam search.
-        Params:
-            encoder: encoder model
-            decoder: decoder model
-            image_path: path to image
-            word_map: word map
-            beam_size: number of sequences to consider at each decode-step
-        Returns:
-            caption, weights for visualization
+        :param encoder: encoder model
+        :param decoder: decoder model
+        :param image_path: path to image
+        :param word_map: word map
+        :param beam_size: number of sequences to consider at each decode-step
+        :return caption, weights for visualization
     """
 
     k = beam_size
