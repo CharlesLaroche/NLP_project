@@ -69,7 +69,7 @@ class EncodeCaption:
 class CocoDataset(VisionDataset):
     """ Dataset class that handle COCO caption dataset """
     def __init__(self, img_dir, encoded_caption_dir, data_train=True, n_samples=10000,
-                 transform=None, target_transform=None):
+                 transform=None, target_transform=None, transforms=None):
         """ :param img_dir: str containing the path to the image folder
             :param encoded_caption_dir: str containing the path to the caption json file
             :param data_train: Boolean whether we want the training or validation data (2/3 1/3 split)
@@ -77,7 +77,7 @@ class CocoDataset(VisionDataset):
             :param transform: transformation to do on the images
             :param target_transform: transformation to do on the encoded captions
             """
-        super(CocoDataset, self).__init__(img_dir, transform, target_transform)
+        super(CocoDataset, self).__init__(img_dir, transforms, transform, target_transform)
 
         self.encoded_caption_dir = encoded_caption_dir
         self.maximum_length = n_samples
