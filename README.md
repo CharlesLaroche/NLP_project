@@ -33,6 +33,14 @@ NLP_Project
 - **visualize.py** contains a function that do visualization of images with attention coefficients.
 - **utils.py** contains some utilities
 
+## The authors
+
+Etienne Sullice is a student at ENSAE Paris and Charles Laroche is a student at ENSAE Paris and University Paris Saclay.
+
+On the left Charles and on the right Etienne:
+![test image size](img/gen_etien_char.png)
+
+Our model still do some mistakes, even on the persons that trained it. We can also think that it is just trying to idealize us...
 ## References
 
 [Long short-term memory](https://www.bioinf.jku.at/publications/older/2604.pdf)<br>
